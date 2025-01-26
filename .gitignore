@@ -1,0 +1,42 @@
+# Python-related files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.so
+
+# Django-related files
+*.log
+*.pot
+*.pyc
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+
+# Environment variables
+.env
+
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+
+# IDE/editor-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Docker-related files
+docker-compose.override.yml
+*.docker
+
+# Test files (optional)
+test_data/
