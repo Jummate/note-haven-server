@@ -92,7 +92,7 @@ def forgot_password(request):
             user = CustomUser.objects.get(email=email)
             reset_token = generate_reset_token(user)
             #implement a functionality to send out email
-            return Response({"message": "Email sent successfully", "email":email, "reset_token":reset_token}, status.HTTP_200_OK)
+            return Response({"message": "Email sent successfully", "email":email}, status.HTTP_200_OK)
 
      
 
