@@ -3,6 +3,7 @@
 # from datetime import timedelta, datetime, timezone
 
 from django.utils import timezone
+from django.conf import settings
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -15,6 +16,9 @@ from users.models import CustomUser
 from .serialisers import SignupSerializer, LoginSerializer, ResetPasswordSerializer, ForgotPasswordSerializer
 from .services import AuthService
 from common.utils.generate_token import generate_reset_token, verify_reset_token
+from common.utils.generate_password_reset_link import generate_password_reset_link
+from common.utils.generate_email_template import generate_html_template
+from common.services.email_service import forward_mail
 
 
 
@@ -91,7 +95,10 @@ def forgot_password(request):
             email = serializer.validated_data["email"]
             user = CustomUser.objects.get(email=email)
             reset_token = generate_reset_token(user)
-            #implement a functionality to send out email
+            reset_link = generate_password_reset_link(reset_token)
+            html_template = generate_html_template("Omololu Jumat", "Yakub Jumat", reset_link)
+            # add email into recipient_list later
+            forward_mail(subject="Verify Your Mail", from_email=settings.EMAIL_HOST_USER, recipient_list=["yakubjumat@gmail.com"], html_message=html_template)
             return Response({"message": "Email sent successfully", "email":email}, status.HTTP_200_OK)
 
      
