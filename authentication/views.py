@@ -98,7 +98,7 @@ def forgot_password(request):
             reset_link = generate_password_reset_link(reset_token)
             html_template = generate_html_template("Omololu Jumat", "Yakub Jumat", reset_link)
             # add email into recipient_list later
-            forward_mail(subject="Verify Your Mail", from_email=settings.EMAIL_HOST_USER, recipient_list=["yakubjumat@gmail.com"], html_message=html_template)
+            forward_mail(subject="Reset Your Password", from_email=settings.EMAIL_HOST_USER, recipient_list=["yakubjumat@gmail.com"], html_message=html_template)
             return Response({"message": "Email sent successfully", "email":email}, status.HTTP_200_OK)
 
      
