@@ -45,3 +45,5 @@ test_data/
 localhost.crt
 localhost.key
 
+.env
+.env.*
