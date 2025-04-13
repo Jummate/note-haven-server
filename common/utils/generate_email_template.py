@@ -73,7 +73,7 @@ def generate_html_template(recipient_name, sender_name, reset_link=None):
                 <h2>Password Reset</h2>
             </div>
             <div class="email-body">
-                <p>Dear {recipient_name},</p>
+                <p>Hi there,</p>
                 <p>We received a request to reset your password for your NoteHaven account. You can reset your password by clicking the link below:</p>
                 <p class="cont-reset-link"><a href="{reset_link}"><button id="btn-reset-link">Reset Password</button></a></p>
                 <p>This link will expire in 30 minutes. If you didn’t request a password reset, you can safely ignore this email—your password will remain unchanged.</p>

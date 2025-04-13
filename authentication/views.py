@@ -96,9 +96,8 @@ def forgot_password(request):
             user = CustomUser.objects.get(email=email)
             reset_token = generate_reset_token(user)
             reset_link = generate_password_reset_link(reset_token)
-            html_template = generate_html_template("Omololu Jumat", "Yakub Jumat", reset_link)
-            # add email into recipient_list later
-            forward_mail(subject="Reset Your Password", from_email=settings.EMAIL_HOST_USER, recipient_list=["yakubjumat@gmail.com"], html_message=html_template)
+            html_template = generate_html_template("", "Notes Haven", reset_link)
+            forward_mail(subject="Reset Your Password", from_email=settings.EMAIL_HOST_USER, recipient_list=[email], html_message=html_template)
             return Response({"message": "Email sent successfully", "email":email}, status.HTTP_200_OK)
 
      
