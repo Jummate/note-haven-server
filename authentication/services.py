@@ -53,6 +53,7 @@ class AuthService():
         )
 
         AuthService.set_refresh_token_cookie(response, tokens["refresh"])
+        print("response", response)
         return response
     
     @staticmethod
