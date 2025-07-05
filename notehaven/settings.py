@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
     'users',
     'notes',
+    'tags',
     'authentication'
 ]
 
