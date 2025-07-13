@@ -43,24 +43,24 @@ class AuthService():
         response = None
         if action == "login":
             response = Response(
-            {"access": tokens["access"], "message": "Login successful"}, status=status.HTTP_200_OK)
+            {"accessToken": tokens["accessToken"], "message": "Login successful"}, status=status.HTTP_200_OK)
         else:
             response = Response(
-            {"access": tokens["access"], "message": "User registered successfully", "user": {
+            {"accessToken": tokens["accessToken"], "message": "User registered successfully", "user": {
                         "id": user.id,
                         "email": user.email,
                     }}, status=status.HTTP_201_CREATED
         )
 
-        AuthService.set_refresh_token_cookie(response, tokens["refresh"])
+        AuthService.set_refresh_token_cookie(response, tokens["refreshToken"])
         return response
     
     @staticmethod
     def generate_jwt_token(user):
         refresh = RefreshToken.for_user(user)
         return {
-            "refresh": str(refresh),
-            "access": str(refresh.access_token),
+            "refreshToken": str(refresh),
+            "accessToken": str(refresh.access_token),
         }
     
     @staticmethod
