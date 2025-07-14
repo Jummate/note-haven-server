@@ -16,6 +16,7 @@ def notes_view(request):
             return Response({"message":"Note created succesfully", "data":response_data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'GET':
+        print("okay")
         return Response({"message":"notes"}, status=status.HTTP_200_OK)
 
 @api_view(['GET','PUT','PATCH','DELETE'])
