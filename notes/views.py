@@ -23,6 +23,11 @@ def notes_view(request):
         return Response(response_data, status=status.HTTP_200_OK)
 
 @api_view(['GET','PUT','PATCH','DELETE'])
-def note_detail(request):
-    if request.method == 'GET':
-        return Response({"message":"Note created succesfully"}, status=status.HTTP_201_CREATED)
+def note_detail(request, note_id):
+    try:
+        note = Note.objects.get(id=note_id, user=request.user)
+    except note.DoesNotExist:
+        return Response({"error": "Note not found"}, status=status.HTTP_404_NOT_FOUND)
+    if request.method == 'DELETE':
+        note.delete()
+        return Response({"message":"Note deleted succesfully"}, status=status.HTTP_200_OK)
