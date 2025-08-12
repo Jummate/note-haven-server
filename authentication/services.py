@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.utils.timezone import now
 from django.contrib.auth.hashers import check_password
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
@@ -74,5 +75,17 @@ class AuthService():
             samesite ="None",
             max_age=7 * 24 * 60 * 60,  # Set expiration for 7 days
         )
+
+    @staticmethod
+    def update_user_password(user, new_password):
+        user.set_password(new_password)
+        user.last_password_reset = now()
+        user.save()
+
+    @staticmethod
+    def blacklist_all_tokens(user):
+        tokens = OutstandingToken.objects.filter(user=user)
+        for token in tokens:
+            BlacklistedToken.objects.get_or_create(token=token)
 
 
