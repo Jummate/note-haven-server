@@ -4,8 +4,6 @@ from rest_framework.exceptions import AuthenticationFailed
 from datetime import timedelta
 from django.utils.timezone import now
 
-
-
 from users.models import CustomUser
 
 class SignupSerializer(serializers.Serializer):
@@ -93,25 +91,30 @@ class ForgotPasswordSerializer(serializers.Serializer):
             return value
          
 class ChangePasswordSerializer(serializers.Serializer):
-    password = serializers.CharField(write_only=True)
+    new_password = serializers.CharField(write_only=True)
     old_password = serializers.CharField(write_only=True)
+    confirm_new_password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
         old_password = attrs.get("old_password")
-        password = attrs.get("new_password")
-        confirm_password = attrs.get("confirm_password")
+        new_password = attrs.get("new_password")
+        confirm_new_password = attrs.get("confirm_new_password")
         
-        if not old_password or not password:
+        if not old_password or not new_password:
             raise serializers.ValidationError({"detail":"Password is required"}, code=400)
-        if password != confirm_password:
+        if old_password == new_password:
+            raise serializers.ValidationError({"detail":"New password cannot be the same as the current password"}, code=400)
+        if new_password != confirm_new_password:
             raise serializers.ValidationError("Passwords do not match.")
-        # try:
-        #     user = CustomUser.objects.get(email=email)
-        # except CustomUser.DoesNotExist:
-        #     raise serializers.ValidationError({"detail": "Invalid credentials"}, code=404)
-        
         return attrs
-    def validate_password(self, value):
+    def validate_new_password(self, value):
         if len(value) < 8:
             raise serializers.ValidationError("Password must be at least 8 characters long.")
+        return value
+    def validate_old_password(self, value):
+        user = self.context['request'].user
+        if user.is_anonymous:
+            raise serializers.ValidationError("Authentication required to change password")
+        if not user.check_password(value):
+            raise serializers.ValidationError("Old password is incorrect")
         return value

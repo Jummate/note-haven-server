@@ -11,6 +11,9 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 
+import inspect
+
+
 
 from users.models import CustomUser
 from .serialisers import ChangePasswordSerializer, SignupSerializer, LoginSerializer, ResetPasswordSerializer, ForgotPasswordSerializer
@@ -106,7 +109,10 @@ def change_password(request):
      serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
      if serializer.is_valid():
 
-        new_password = serializer.validated_data["password"]
+        new_password = serializer.validated_data["new_password"]
+
+        print(inspect.signature(AuthService.update_user_password))
+
          
         AuthService.update_user_password(request.user, new_password, blacklist_tokens=True)   
         # user.set_password(new_password)

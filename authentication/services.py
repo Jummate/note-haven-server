@@ -14,7 +14,7 @@ from users.models import CustomUser
 class AuthService():
 
     MAX_FAILED_ATTEMPTS = 5
-    LOCK_TIME = timedelta(minutes=0.5)
+    LOCK_TIME = timedelta(minutes=15)
 
     @staticmethod
     def authenticate_user(email, password, action="login"):
@@ -77,10 +77,12 @@ class AuthService():
         )
 
     @staticmethod
-    def update_user_password(user, new_password):
+    def update_user_password(user, new_password, blacklist_tokens=True):
         user.set_password(new_password)
         user.last_password_reset = now()
         user.save()
+        if blacklist_tokens:
+            AuthService.blacklist_all_tokens(user)
 
     @staticmethod
     def blacklist_all_tokens(user):
