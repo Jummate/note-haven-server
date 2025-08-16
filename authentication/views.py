@@ -11,9 +11,12 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 
+import inspect
+
+
 
 from users.models import CustomUser
-from .serialisers import SignupSerializer, LoginSerializer, ResetPasswordSerializer, ForgotPasswordSerializer
+from .serialisers import ChangePasswordSerializer, SignupSerializer, LoginSerializer, ResetPasswordSerializer, ForgotPasswordSerializer
 from .services import AuthService
 from common.utils.generate_token import generate_reset_token, verify_reset_token
 from common.utils.generate_password_reset_link import generate_password_reset_link
@@ -79,9 +82,10 @@ def reset_password(request):
             return Response({"detail": "Invalid or missing reset token"}, status.HTTP_400_BAD_REQUEST)
          
         user = CustomUser.objects.get(email=email)
-        user.set_password(new_password)
-        user.last_password_reset = timezone.now()
-        user.save()
+        AuthService.update_user_password(user, new_password)
+        # user.set_password(new_password)
+        # user.last_password_reset = timezone.now()
+        # user.save()
         return Response({"message": "Password reset successful"}, status.HTTP_200_OK)
      return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -99,6 +103,25 @@ def forgot_password(request):
             html_template = generate_html_template("", "Notes Haven", reset_link)
             forward_mail(subject="Reset Your Password", from_email=settings.EMAIL_HOST_USER, recipient_list=[email], html_message=html_template)
             return Response({"message": "Email sent successfully", "email":email}, status.HTTP_200_OK)
+         
+@api_view(["POST"])
+def change_password(request):
+     serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
+     if serializer.is_valid():
+
+        new_password = serializer.validated_data["new_password"]
+
+        print(inspect.signature(AuthService.update_user_password))
+
+         
+        AuthService.update_user_password(request.user, new_password, blacklist_tokens=True)   
+        # user.set_password(new_password)
+        # user.last_password_reset = timezone.now()
+        # user.save()
+        response = Response({"message": "Password successfully changed"}, status.HTTP_200_OK)
+        response.delete_cookie("refresh_token")
+        return response
+     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
      
 
