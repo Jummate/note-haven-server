@@ -17,7 +17,7 @@ class SignupSerializer(serializers.Serializer):
         confirm_password = attrs.get('confirm_password')
 
         if password != confirm_password:
-            raise serializers.ValidationError("Passwords do not match.")
+            raise serializers.ValidationError({"detail":"Passwords do not match."})
         
         #  # Optional: Add password strength validation
         # if not any(char.isdigit() for char in password):
@@ -29,12 +29,12 @@ class SignupSerializer(serializers.Serializer):
         return attrs
     def validate_email(self, value):
         if "@" not in value:
-            raise serializers.ValidationError("Invalid email format.")
+            raise serializers.ValidationError({"detail":"Invalid email format."})
         return value
 
     def validate_password(self, value):
         if len(value) < 8:
-            raise serializers.ValidationError("Password must be at least 8 characters long.")
+            raise serializers.ValidationError({"detail":"Password must be at least 8 characters long."})
         return value
     
     def create(self, validated_data):
@@ -69,7 +69,7 @@ class ResetPasswordSerializer(serializers.Serializer):
         password = attrs.get("password")
         confirm_password = attrs.get("confirm_password")
         if password != confirm_password:
-            raise serializers.ValidationError("Passwords do not match.")
+            raise serializers.ValidationError({"detail":"Passwords do not match."})
         if not password:
             raise serializers.ValidationError({"detail":"Password is required"}, code=400)
         # try:
@@ -80,14 +80,14 @@ class ResetPasswordSerializer(serializers.Serializer):
         return attrs
     def validate_password(self, value):
         if len(value) < 8:
-            raise serializers.ValidationError("Password must be at least 8 characters long.")
+            raise serializers.ValidationError({"detail":"Password must be at least 8 characters long."})
         return value
     
 class ForgotPasswordSerializer(serializers.Serializer):
          email = serializers.EmailField()
          def validate_email(self, value):
             if "@" not in value:
-                raise serializers.ValidationError("Invalid email format.")
+                raise serializers.ValidationError({"detail":"Invalid email format."})
             return value
          
 class ChangePasswordSerializer(serializers.Serializer):
@@ -105,7 +105,7 @@ class ChangePasswordSerializer(serializers.Serializer):
         if old_password == new_password:
             raise serializers.ValidationError({"detail":"New password cannot be the same as the current password"}, code=400)
         if new_password != confirm_new_password:
-            raise serializers.ValidationError("Passwords do not match.")
+            raise serializers.ValidationError({"detail":"Passwords do not match."})
         return attrs
     def validate_new_password(self, value):
         if len(value) < 8:
