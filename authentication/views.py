@@ -9,9 +9,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
-
-import inspect
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
 
 
@@ -111,7 +109,6 @@ def change_password(request):
 
         new_password = serializer.validated_data["new_password"]
 
-        print(inspect.signature(AuthService.update_user_password))
 
          
         AuthService.update_user_password(request.user, new_password, blacklist_tokens=True)   
@@ -122,6 +119,27 @@ def change_password(request):
         response.delete_cookie("refresh_token")
         return response
      return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(["GET"])
+def refresh_token(request):
+     refresh_token = request.COOKIES.get("refresh_token")
+     if not refresh_token:
+        return Response({"message": "Refresh token missing"}, status=status.HTTP_401_UNAUTHORIZED)
+     
+     try:
+        refresh = RefreshToken(refresh_token)
+        # user = refresh.user
+        # if getattr(user, "last_password_reset", None):
+        #     if refresh["iat"] < int(user.last_password_reset.timestamp()):
+        #         raise TokenError("Token invalid due to password reset")
+
+        access_token = str(refresh.access_token)
+        return Response({"accessToken": access_token}, status=status.HTTP_200_OK)
+     except TokenError:
+          return Response({"message": "Invalid or expired refresh token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    
+
 
      
 
