@@ -1,5 +1,5 @@
 
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
@@ -45,6 +45,8 @@ def login(request):
 # Logout
 # -------------------
 @api_view(['POST'])
+@authentication_classes([]) 
+@permission_classes([AllowAny])
 def logout(request):
     refresh_token = request.COOKIES.get("refresh_token")
     if not refresh_token:
@@ -138,6 +140,5 @@ def refresh_token(request):
 
 
         
-        # return Response({"accessToken": str(refresh.access_token)}, status=status.HTTP_200_OK)
     except TokenError:
         raise APIException("INVALID_TOKEN", "Could not refresh session. Please log in again.", status_code=401)
