@@ -140,7 +140,7 @@ def custom_exception_handler(exc, context):
         detail = response.data.get("detail") if isinstance(response.data, dict) else None
         code = "UNKNOWN_ERROR"
         message = str(detail) if detail else "An error occurred"
-        return Response({"code": code, "message": message}, status=response.status_code)
+        return Response({"code": code, "message": f'{message}'}, status=response.status_code)
 
     # 4. Unexpected errors fallback (500)
     return Response(
